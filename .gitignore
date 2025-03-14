@@ -1,0 +1,21 @@
+env
+venv
+.venv
+*.pyc
+.vscode
+.idea
+set-env.sh
+attachments/*.*
+.env
+.env-local
+docker-compose.yml
+tmp/*
+!tmp/.gitkeep
+storage/*
+!storage/.gitkeep
+message_insert_excel.json
+static/*
+cloudflared.deb
+.env copy
+.env
+deployment.yaml
