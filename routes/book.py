@@ -7,7 +7,7 @@ from core.responses import common_response, BadRequest, Ok
 
 router = APIRouter(tags=["Books"])
 
-@router.get("")
+@router.get("/list")
 async def get_books_list(
     db: Session = Depends(get_db_sync),
     page: int = 1,
@@ -31,6 +31,26 @@ async def get_books_list(
                         }
                         for book in data
                     ]
+                }
+            )
+        )
+    except Exception as e:
+        return common_response(BadRequest(message='Failed to get book data', error=str(e)))
+    
+@router.get("/detail/{id}")
+async def get_book_detail(
+    db: Session = Depends(get_db_sync),
+    id: str = None,
+):
+    try:
+        data = book_repo.get_book_by_id(db, id)
+        return common_response(
+            Ok(
+                data={
+                    "id": str(data.id),
+                    "title": data.title,
+                    "author": data.author,
+                    "year": data.year,
                 }
             )
         )

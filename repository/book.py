@@ -25,3 +25,7 @@ def get_all_books(
     num_data = db.execute(query_count).scalar()
     num_page = ceil(num_data / limit)
     return (data, num_data, num_page)
+
+def get_book_by_id(db: Session, id: str):
+    query = (select(Book).filter(Book.id == id))
+    return db.execute(query).scalar_one()
