@@ -9,6 +9,9 @@ from settings import (
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.declarative import declarative_base
+from typing import AsyncGenerator
 
 db_user = POSTGRESQL_USER
 db_password = POSTGRESQL_PASSWORD
@@ -22,7 +25,8 @@ postgres_engine = create_engine(
     pool_size=db_pool_size,
     max_overflow=db_pool_size,
     pool_pre_ping=True,
-    pool_recycle=3600
+    pool_recycle=3600,
+    echo=True
 )
 
 psql_session = sessionmaker(postgres_engine, future=True)
@@ -45,8 +49,8 @@ def get_db_sync():
 # https://docs.sqlalchemy.org/en/14/orm/extensions/asyncio.html#synopsis-orm
 # asyncpg currently not working on PyPy
 ## Create async session
-async_engine = create(
-    f"postgresql+psycopg://{username}:{password}@{host}:{port}/{database}",
+async_engine = create_async_engine(
+   f"postgresql+psycopg://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}",
     # echo=True,
     pool_size=20,
     max_overflow=5,
