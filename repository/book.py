@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
-from entity.Book import Book
+from models.Book import Book
 from sqlalchemy.sql.expression import select, func
 from math import ceil
 from typing import Optional
+
+from schemas.book import CreateBookRequest
 
 def get_all_books(
     db: Session,
@@ -29,3 +31,14 @@ def get_all_books(
 def get_book_by_id(db: Session, id: str):
     query = (select(Book).filter(Book.id == id))
     return db.execute(query).scalar_one()
+
+def create_book(db: Session, data: CreateBookRequest):
+    book = Book(
+        title=data.title,
+        author=data.author,
+        year=data.year,
+    )
+    db.add(book)
+    db.commit()
+    db.refresh(book)
+    return book

@@ -3,7 +3,8 @@ from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from db.postgres import get_db_sync
 from repository import book as book_repo
-from core.responses import common_response, BadRequest, Ok
+from core.responses import Created, common_response, BadRequest, Ok
+from schemas.book import CreateBookRequest
 
 router = APIRouter(tags=["Books"])
 
@@ -56,3 +57,22 @@ async def get_book_detail(
         )
     except Exception as e:
         return common_response(BadRequest(message='Failed to get book data', error=str(e)))
+    
+
+@router.post("/create")
+async def create_book(
+    db: Session = Depends(get_db_sync),
+    payload: CreateBookRequest = None,
+):  
+    try:
+        data = book_repo.create_book(db, payload)
+        return common_response(Created(
+            data={
+                "id": str(data.id),
+                "title": data.title,
+                "author": data.author,
+                "year": data.year,
+            }
+        ))
+    except Exception as e:
+        return common_response(BadRequest(message='Failed to create book data', error=str(e)))
