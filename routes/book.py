@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from db.postgres import get_db_sync
 from repository import book as book_repo
 from core.responses import Created, common_response, BadRequest, Ok
-from schemas.book import CreateBookRequest
+from schemas.book import CreateBookRequest, UpdateBookRequest
 
 router = APIRouter(tags=["Books"])
 
@@ -76,3 +76,22 @@ async def create_book(
         ))
     except Exception as e:
         return common_response(BadRequest(message='Failed to create book data', error=str(e)))
+    
+@router.put("/update/{id}")
+async def update_book(
+    db: Session = Depends(get_db_sync),
+    id: str = None,
+    payload: UpdateBookRequest = None,
+):
+    try:
+        data = book_repo.update_book(db, id, payload)
+        return common_response(Ok(
+            data={
+                "id": str(data.id),
+                "title": data.title,
+                "author": data.author,
+                "year": data.year,
+            }
+        ))
+    except Exception as e:
+        return common_response(BadRequest(message='Failed to update book data', error=str(e)))

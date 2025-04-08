@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse, Response
 class Ok:
     def __init__(self, data: Optional[Any]) -> None:
         if data != None:
-            self.data = data
+            self.data = data 
         else:
             self.data = ""
 
